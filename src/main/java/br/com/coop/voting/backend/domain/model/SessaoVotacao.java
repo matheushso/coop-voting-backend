@@ -1,9 +1,6 @@
 package br.com.coop.voting.backend.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -11,8 +8,8 @@ import java.util.List;
 @Entity
 public class SessaoVotacao {
 
-
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne

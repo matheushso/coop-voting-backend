@@ -1,8 +1,6 @@
 package br.com.coop.voting.backend.domain.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -10,6 +8,7 @@ import java.util.List;
 public class Pauta {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String descricao;
