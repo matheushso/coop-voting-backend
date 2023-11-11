@@ -1,5 +1,6 @@
 package br.com.coop.voting.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -13,6 +14,31 @@ public class Pauta {
 
     private String descricao;
 
-    @OneToMany
+    @JsonIgnore
+    @OneToMany(mappedBy = "pauta")
     private List<SessaoVotacao> sessoesVotacao;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public List<SessaoVotacao> getSessoesVotacao() {
+        return sessoesVotacao;
+    }
+
+    public void setSessoesVotacao(List<SessaoVotacao> sessoesVotacao) {
+        this.sessoesVotacao = sessoesVotacao;
+    }
 }
