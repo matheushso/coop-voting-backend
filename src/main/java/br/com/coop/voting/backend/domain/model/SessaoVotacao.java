@@ -2,6 +2,7 @@ package br.com.coop.voting.backend.domain.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -17,11 +18,16 @@ public class SessaoVotacao {
 
     private LocalTime tempoAbertura;
 
+    private LocalDateTime dataInicio;
+
+    private LocalDateTime dataFechamento;
+
     @OneToMany
     private List<Voto> votos;
 
     public SessaoVotacao() {
         this.tempoAbertura = LocalTime.ofSecondOfDay(60);
+        this.dataInicio = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -46,6 +52,22 @@ public class SessaoVotacao {
 
     public void setTempoAbertura(LocalTime tempoAbertura) {
         this.tempoAbertura = tempoAbertura;
+    }
+
+    public LocalDateTime getDataInicio() {
+        return dataInicio;
+    }
+
+    public void setDataInicio(LocalDateTime dataInicio) {
+        this.dataInicio = dataInicio;
+    }
+
+    public LocalDateTime getDataFechamento() {
+        return dataFechamento;
+    }
+
+    public void setDataFechamento(LocalDateTime dataFechamento) {
+        this.dataFechamento = dataFechamento;
     }
 
     public List<Voto> getVotos() {
