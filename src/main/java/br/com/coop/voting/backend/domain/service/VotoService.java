@@ -1,14 +1,22 @@
 package br.com.coop.voting.backend.domain.service;
 
+import br.com.coop.voting.backend.domain.DTO.StatusDTO;
 import br.com.coop.voting.backend.domain.enums.EscolhaVoto;
-import br.com.coop.voting.backend.domain.model.*;
+import br.com.coop.voting.backend.domain.enums.StatusPermissao;
+import br.com.coop.voting.backend.domain.exception.AssociadoNaoAutorizadoException;
+import br.com.coop.voting.backend.domain.model.Associado;
+import br.com.coop.voting.backend.domain.model.Pauta;
+import br.com.coop.voting.backend.domain.model.SessaoVotacao;
+import br.com.coop.voting.backend.domain.model.Voto;
 import br.com.coop.voting.backend.domain.repository.AssociadoRepository;
 import br.com.coop.voting.backend.domain.repository.PautaRepository;
 import br.com.coop.voting.backend.domain.repository.SessaoVotacaoRepository;
 import br.com.coop.voting.backend.domain.repository.VotoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class VotoService {
@@ -26,16 +34,38 @@ public class VotoService {
     private SessaoVotacaoRepository sessaoVotacaoRepository;
 
     @Autowired
-    private  SessaoVotacaoService sessaoVotacaoService;
+    private SessaoVotacaoService sessaoVotacaoService;
+
+    @Value("${url.integracao.validar.associado}")
+    protected String urlValidaCpfAssociado;
+
 
     public Voto cadastrarVoto(Voto voto) {
+        validarCampos(voto);
+        return votoRepository.save(voto);
+    }
+
+    public Voto cadastrarPautaValidandoCpfAssociado(Voto voto) {
+        validarCampos(voto);
+
+        RestTemplate restTemplate = new RestTemplate();
+        StatusDTO statusPermissao = restTemplate.getForEntity(urlValidaCpfAssociado.concat("/").concat(voto.getAssociado().getCpf()), StatusDTO.class).getBody();
+
+        if (statusPermissao != null) {
+            if (statusPermissao.getStatus().equals(StatusPermissao.UNABLE_TO_VOTE)) {
+                throw new AssociadoNaoAutorizadoException(String.format("O Associado com CPF %s não possui permissão para votar.", voto.getAssociado().getCpf()));
+            }
+        }
+
+        return votoRepository.save(voto);
+    }
+
+    private void validarCampos(Voto voto) {
         voto.setAssociado(retornarAssociado(voto.getAssociado()));
         voto.setPauta(retornarPauta(voto.getPauta()));
         validarSeAssociadoPodeVotar(voto);
         validarSePautaPossuiSessaoEmAberto(voto.getPauta());
         voto.setVoto(EscolhaVoto.retornarVotoValido(voto.getVoto()));
-
-        return votoRepository.save(voto);
     }
 
     private Associado retornarAssociado(Associado associado) {
@@ -65,7 +95,7 @@ public class VotoService {
     }
 
     private void validarSePautaPossuiSessaoEmAberto(Pauta pauta) {
-        if (pauta.getSessoesVotacao().isEmpty())  {
+        if (pauta.getSessoesVotacao().isEmpty()) {
             throw new IllegalArgumentException(String.format("Pauta %s não possui nenhuma Sessão de votação.", pauta.getDescricao()));
         }
 
