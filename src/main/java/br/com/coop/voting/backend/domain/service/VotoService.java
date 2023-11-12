@@ -1,5 +1,6 @@
 package br.com.coop.voting.backend.domain.service;
 
+import br.com.coop.voting.backend.domain.enums.EscolhaVoto;
 import br.com.coop.voting.backend.domain.model.*;
 import br.com.coop.voting.backend.domain.repository.AssociadoRepository;
 import br.com.coop.voting.backend.domain.repository.PautaRepository;
