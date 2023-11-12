@@ -22,12 +22,15 @@ public class SessaoVotacao {
 
     private LocalDateTime dataFechamento;
 
+    private Boolean resultadoPublicado;
+
     @OneToMany
     private List<Voto> votos;
 
     public SessaoVotacao() {
         this.tempoAbertura = LocalTime.ofSecondOfDay(60);
         this.dataInicio = LocalDateTime.now();
+        this.resultadoPublicado = Boolean.FALSE;
     }
 
     public Long getId() {
@@ -68,6 +71,14 @@ public class SessaoVotacao {
 
     public void setDataFechamento(LocalDateTime dataFechamento) {
         this.dataFechamento = dataFechamento;
+    }
+
+    public Boolean getResultadoPublicado() {
+        return resultadoPublicado;
+    }
+
+    public void setResultadoPublicado(Boolean resultadoPublicado) {
+        this.resultadoPublicado = resultadoPublicado;
     }
 
     public List<Voto> getVotos() {
