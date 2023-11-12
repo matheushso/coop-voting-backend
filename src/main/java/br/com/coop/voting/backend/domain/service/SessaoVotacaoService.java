@@ -8,6 +8,8 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class SessaoVotacaoService {
 
@@ -23,6 +25,10 @@ public class SessaoVotacaoService {
         calcularDataFechamento(sessaoVotacao);
 
         return sessaoVotacaoRepository.save(sessaoVotacao);
+    }
+
+    public Boolean verificarSeSessaoEstaEmAberto(SessaoVotacao sessaoVotacao) {
+        return sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now());
     }
 
     private Pauta retornarPautaValida(Pauta pauta) {
