@@ -10,7 +10,7 @@
     </parent>
     <groupId>coop-voting-backend</groupId>
     <artifactId>coop-voting-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>coop-voting-backend</name>
     <description>coop-voting-backend</description>
     <properties>
@@ -49,6 +49,11 @@
         <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-mysql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
         </dependency>
     </dependencies>
 
