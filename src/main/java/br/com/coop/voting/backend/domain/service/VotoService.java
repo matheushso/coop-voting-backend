@@ -37,7 +37,9 @@ public class VotoService {
     private SessaoVotacaoService sessaoVotacaoService;
 
     @Value("${url.integracao.validar.associado}")
-    protected String urlValidaCpfAssociado;
+    private String urlValidaCpfAssociado;
+
+    private RestTemplate restTemplate = new RestTemplate();
 
 
     public Voto cadastrarVoto(Voto voto) {
@@ -48,13 +50,14 @@ public class VotoService {
     public Voto cadastrarVotoValidandoCpfAssociado(Voto voto) {
         validarCampos(voto);
 
-        RestTemplate restTemplate = new RestTemplate();
-        StatusDTO statusPermissao = restTemplate.getForEntity(urlValidaCpfAssociado.concat("/").concat(voto.getAssociado().getCpf()), StatusDTO.class).getBody();
+        StatusDTO statusPermissao = restTemplate.getForEntity(urlValidaCpfAssociado + "/" + voto.getAssociado().getCpf(), StatusDTO.class).getBody();
 
         if (statusPermissao != null) {
             if (statusPermissao.getStatus().equals(StatusPermissao.UNABLE_TO_VOTE)) {
                 throw new AssociadoNaoAutorizadoException(String.format("O Associado com CPF %s não possui permissão para votar.", voto.getAssociado().getCpf()));
             }
+        } else {
+            throw new IllegalArgumentException("Erro na integração com sistema que valida se o CPF possui permissão para votar, por favor aguarde um momento e tente novamente.");
         }
 
         return votoRepository.save(voto);

@@ -6,6 +6,12 @@ public class StatusDTO {
 
     private StatusPermissao status;
 
+    public StatusDTO() {}
+
+    public StatusDTO(StatusPermissao status) {
+        this.status = status;
+    }
+
     public StatusPermissao getStatus() {
         return status;
     }
