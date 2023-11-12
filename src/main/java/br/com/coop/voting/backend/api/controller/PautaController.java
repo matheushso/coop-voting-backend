@@ -1,6 +1,6 @@
 package br.com.coop.voting.backend.api.controller;
 
-import br.com.coop.voting.backend.domain.model.MensagemErro;
+import br.com.coop.voting.backend.domain.DTO.MensagemErroDTO;
 import br.com.coop.voting.backend.domain.model.Pauta;
 import br.com.coop.voting.backend.domain.service.PautaService;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,7 +24,7 @@ public class PautaController {
             return ResponseEntity.status(HttpStatus.CREATED).body(pauta);
 
         } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensagemErro(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensagemErroDTO(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), HttpStatus.NOT_FOUND.value()));
         }
     }
 }

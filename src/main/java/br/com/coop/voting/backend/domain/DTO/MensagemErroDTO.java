@@ -1,6 +1,6 @@
-package br.com.coop.voting.backend.domain.model;
+package br.com.coop.voting.backend.domain.DTO;
 
-public class MensagemErro {
+public class MensagemErroDTO {
 
     private String erro;
 
@@ -8,7 +8,7 @@ public class MensagemErro {
 
     private int status;
 
-    public MensagemErro(String erro, String mensagem, int status) {
+    public MensagemErroDTO(String erro, String mensagem, int status) {
         this.erro = erro;
         this.mensagem = mensagem;
         this.status = status;

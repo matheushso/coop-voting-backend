@@ -1,7 +1,7 @@
 package br.com.coop.voting.backend.api.controller;
 
 import br.com.coop.voting.backend.domain.DTO.ResultadoDTO;
-import br.com.coop.voting.backend.domain.model.MensagemErro;
+import br.com.coop.voting.backend.domain.DTO.MensagemErroDTO;
 import br.com.coop.voting.backend.domain.service.ResultadoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class ResultadoController {
             return ResponseEntity.status(HttpStatus.OK).body(resultado);
 
         } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensagemErro(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensagemErroDTO(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), HttpStatus.NOT_FOUND.value()));
         }
     }
 }
