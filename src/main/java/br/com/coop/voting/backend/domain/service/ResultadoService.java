@@ -46,7 +46,7 @@ public class ResultadoService {
 
     private void atualizarStatusSessao(Pauta pauta) {
         for (SessaoVotacao sessaoVotacao : pauta.getSessoesVotacao()) {
-            if (sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now())) {
+            if (sessaoVotacao.getDataFechamento().isBefore(LocalDateTime.now())) {
                 sessaoVotacao.setResultadoPublicado(Boolean.TRUE);
                 sessaoVotacaoRepository.save(sessaoVotacao);
             }
