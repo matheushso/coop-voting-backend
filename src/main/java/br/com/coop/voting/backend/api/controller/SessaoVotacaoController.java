@@ -18,9 +18,9 @@ public class SessaoVotacaoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> cadastrarPauta(@RequestBody SessaoVotacao sessaoVotacao) {
+    public ResponseEntity<?> cadastrarPauta(@RequestBody SessaoVotacao sessaoVotacao, @RequestParam(name = "tempoAberturaEmMinutos", required = false) Integer tempoAberturaEmMinutos) {
         try {
-            sessaoVotacao = sessaoVotacaoService.cadastrarSessao(sessaoVotacao);
+            sessaoVotacao = sessaoVotacaoService.cadastrarSessao(sessaoVotacao, tempoAberturaEmMinutos);
             return ResponseEntity.status(HttpStatus.CREATED).body(sessaoVotacao);
 
         } catch (EntityNotFoundException ex) {
