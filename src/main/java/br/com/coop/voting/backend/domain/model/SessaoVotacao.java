@@ -24,9 +24,6 @@ public class SessaoVotacao {
 
     private Boolean resultadoPublicado;
 
-    @OneToMany
-    private List<Voto> votos;
-
     public SessaoVotacao() {
         this.tempoAbertura = LocalTime.ofSecondOfDay(60);
         this.dataInicio = LocalDateTime.now();
@@ -79,9 +76,5 @@ public class SessaoVotacao {
 
     public void setResultadoPublicado(Boolean resultadoPublicado) {
         this.resultadoPublicado = resultadoPublicado;
-    }
-
-    public List<Voto> getVotos() {
-        return votos;
     }
 }

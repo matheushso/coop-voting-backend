@@ -18,6 +18,10 @@ public class Pauta {
     @OneToMany(mappedBy = "pauta")
     private List<SessaoVotacao> sessoesVotacao;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "pauta")
+    private List<Voto> votos;
+
     public Long getId() {
         return id;
     }
@@ -40,5 +44,9 @@ public class Pauta {
 
     public void setSessoesVotacao(List<SessaoVotacao> sessoesVotacao) {
         this.sessoesVotacao = sessoesVotacao;
+    }
+
+    public List<Voto> getVotos() {
+        return votos;
     }
 }
