@@ -2,7 +2,7 @@ package br.com.coop.voting.backend.domain.DTO;
 
 public class ResultadoDTO {
 
-    private Long pautaId;
+    private String pautaDescricao;
 
     private int quantidadeSessoes;
 
@@ -12,12 +12,12 @@ public class ResultadoDTO {
 
     private int votosContrarios;
 
-    public Long getPautaId() {
-        return pautaId;
+    public String getPautaDescricao() {
+        return pautaDescricao;
     }
 
-    public void setPautaId(Long pautaId) {
-        this.pautaId = pautaId;
+    public void setPautaDescricao(String pautaDescricao) {
+        this.pautaDescricao = pautaDescricao;
     }
 
     public Integer getQuantidadeSessoes() {

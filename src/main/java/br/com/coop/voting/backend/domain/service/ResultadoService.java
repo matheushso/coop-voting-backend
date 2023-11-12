@@ -26,6 +26,7 @@ public class ResultadoService {
         Pauta pauta = pautaRepository.findById(pautaId).orElseThrow(() -> new EntityNotFoundException(String.format("Não encontrado Pauta com Id %d.", pautaId)));
 
         ResultadoDTO resultado = new ResultadoDTO();
+        resultado.setPautaDescricao(pauta.getDescricao());
         resultado.setQuantidadeSessoes(pauta.getSessoesVotacao().size());
         resultado.setTotalVotos(resultado.getTotalVotos() + pauta.getVotos().size());
 
