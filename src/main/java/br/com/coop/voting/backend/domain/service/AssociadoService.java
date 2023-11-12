@@ -18,6 +18,9 @@ public class AssociadoService {
     }
 
     public Associado cadastrarAssociado(Associado associado) {
+        if (associado.getCpf() == null) {
+            throw new IllegalArgumentException("Não foi informado um CPF.");
+        }
         associado.setCpf(removerPontuacaoCpf(associado.getCpf()));
         validarCpf(associado.getCpf());
         return associadoRepository.save(associado);
