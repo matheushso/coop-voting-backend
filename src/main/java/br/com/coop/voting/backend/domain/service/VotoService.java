@@ -45,7 +45,7 @@ public class VotoService {
         return votoRepository.save(voto);
     }
 
-    public Voto cadastrarPautaValidandoCpfAssociado(Voto voto) {
+    public Voto cadastrarVotoValidandoCpfAssociado(Voto voto) {
         validarCampos(voto);
 
         RestTemplate restTemplate = new RestTemplate();

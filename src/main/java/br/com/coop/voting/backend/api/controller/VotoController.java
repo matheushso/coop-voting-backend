@@ -32,9 +32,9 @@ public class VotoController extends AbstractController {
 
     @PostMapping("/v2/votos")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> cadastrarPautaValidandoCpfAssociado(@RequestBody Voto voto) {
+    public ResponseEntity<?> cadastrarVotoValidandoCpfAssociado(@RequestBody Voto voto) {
         try {
-            voto = votoService.cadastrarPautaValidandoCpfAssociado(voto);
+            voto = votoService.cadastrarVotoValidandoCpfAssociado(voto);
             return ResponseEntity.status(HttpStatus.CREATED).body(voto);
 
         } catch (EntityNotFoundException ex) {
