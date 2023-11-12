@@ -1,7 +1,6 @@
 package br.com.coop.voting.backend.api.controller;
 
 import br.com.coop.voting.backend.domain.model.SessaoVotacao;
-import br.com.coop.voting.backend.domain.service.AbstractService;
 import br.com.coop.voting.backend.domain.service.SessaoVotacaoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/sessoesvotacoes")
-public class SessaoVotacaoController extends AbstractService {
+public class SessaoVotacaoController extends AbstractController {
 
     @Autowired
     private SessaoVotacaoService sessaoVotacaoService;
