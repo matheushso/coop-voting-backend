@@ -1,4 +1,4 @@
-package br.com.coop.voting.backend.domain.model;
+package br.com.coop.voting.backend.domain.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
