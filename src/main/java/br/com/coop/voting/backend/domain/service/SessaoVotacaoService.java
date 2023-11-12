@@ -30,7 +30,7 @@ public class SessaoVotacaoService {
     }
 
     public void verificarSeSessaoEstaEmAberto(SessaoVotacao sessaoVotacao) {
-        if (sessaoVotacao.getDataFechamento().isAfter(LocalDateTime.now())) {
+        if (sessaoVotacao.getDataFechamento().isBefore(LocalDateTime.now())) {
             throw new IllegalArgumentException(String.format("Pauta %s possui Sessão de votação, porém a mesma já está fechada. Aguarde a publicação do resultado dessa Sessão de Votação", sessaoVotacao.getPauta().getDescricao()));
         }
     }
