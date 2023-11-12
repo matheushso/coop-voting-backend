@@ -1,21 +1,20 @@
 version: '3.8'
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
+  postgres:
+    image: postgres:latest
+    container_name: postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: coopvoting
-    cap_add:
-        - SYS_NICE
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: coopvoting
     ports:
-      - '3306:3306'
+      - '5432:5432'
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ./postgres-data:/var/lib/postgresql/data
   adminer:
     image: adminer:4
     container_name: adminer
     restart: always
     ports:
-      - 9090:9090
+      - 9090:8080

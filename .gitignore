@@ -33,3 +33,5 @@ build/
 .vscode/
 
 mysql-data/
+
+postgres-data/
