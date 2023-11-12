@@ -95,7 +95,7 @@ public class VotoService {
     }
 
     private void validarSePautaPossuiSessaoEmAberto(Pauta pauta) {
-        if (pauta.getSessoesVotacao().isEmpty()) {
+        if (pauta.getSessoesVotacao() == null || pauta.getSessoesVotacao().isEmpty()) {
             throw new IllegalArgumentException(String.format("Pauta %s não possui nenhuma Sessão de votação.", pauta.getDescricao()));
         }
 
