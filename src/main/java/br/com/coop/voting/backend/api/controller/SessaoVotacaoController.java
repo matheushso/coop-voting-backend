@@ -1,7 +1,7 @@
 package br.com.coop.voting.backend.api.controller;
 
-import br.com.coop.voting.backend.domain.DTO.MensagemErroDTO;
 import br.com.coop.voting.backend.domain.model.SessaoVotacao;
+import br.com.coop.voting.backend.domain.service.AbstractService;
 import br.com.coop.voting.backend.domain.service.SessaoVotacaoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/sessoesvotacoes")
-public class SessaoVotacaoController {
+public class SessaoVotacaoController extends AbstractService {
 
     @Autowired
     private SessaoVotacaoService sessaoVotacaoService;
@@ -24,9 +24,9 @@ public class SessaoVotacaoController {
             return ResponseEntity.status(HttpStatus.CREATED).body(sessaoVotacao);
 
         } catch (EntityNotFoundException ex) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MensagemErroDTO(HttpStatus.NOT_FOUND.getReasonPhrase(), ex.getMessage(), HttpStatus.NOT_FOUND.value()));
+            return montarMensagemDeErro(HttpStatus.NOT_FOUND, ex.getMessage());
         } catch (IllegalArgumentException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new MensagemErroDTO(HttpStatus.BAD_REQUEST.getReasonPhrase(), ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+            return montarMensagemDeErro(HttpStatus.BAD_REQUEST, ex.getMessage());
         }
     }
 }
