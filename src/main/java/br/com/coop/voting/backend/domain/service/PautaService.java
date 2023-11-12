@@ -12,6 +12,10 @@ public class PautaService {
     private PautaRepository pautaRepository;
 
     public Pauta cadastrarPauta(Pauta pauta) {
+        if (pauta.getDescricao() == null || pauta.getDescricao().trim().isEmpty()) {
+            throw new IllegalArgumentException("O campo descrição da Pauta deve ser preenchido.");
+        }
+
         return pautaRepository.save(pauta);
     }
 }
