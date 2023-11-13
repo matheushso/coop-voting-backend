@@ -1,10 +1,10 @@
 package br.com.coop.voting.backend.domain.model;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 @Entity
 public class SessaoVotacao {
@@ -16,12 +16,16 @@ public class SessaoVotacao {
     @ManyToOne
     private Pauta pauta;
 
+    @Hidden
     private LocalTime tempoAbertura;
 
+    @Hidden
     private LocalDateTime dataInicio;
 
+    @Hidden
     private LocalDateTime dataFechamento;
 
+    @Hidden
     private Boolean resultadoPublicado;
 
     public SessaoVotacao() {
