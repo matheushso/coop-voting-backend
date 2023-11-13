@@ -264,7 +264,6 @@ public class VotoServiceTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
 
         assertEquals("Valor inválido informado para escolha de voto. Valor informado Voto invalido.", exception.getMessage());
-
         verify(votoRepository, times(0)).save(voto);
     }
 
@@ -287,7 +286,6 @@ public class VotoServiceTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
 
         assertEquals("Não informado voto.", exception.getMessage());
-
         verify(votoRepository, times(0)).save(voto);
     }
 
@@ -312,7 +310,6 @@ public class VotoServiceTest {
         AssociadoNaoAutorizadoException exception = assertThrows(AssociadoNaoAutorizadoException.class, () -> votoService.cadastrarVotoValidandoCpfAssociado(voto));
 
         assertEquals(String.format("O Associado com CPF %s não possui permissão para votar.", voto.getAssociado().getCpf()), exception.getMessage());
-
         verify(votoRepository, times(0)).save(voto);
     }
 
@@ -337,7 +334,6 @@ public class VotoServiceTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVotoValidandoCpfAssociado(voto));
 
         assertEquals("Erro na integração com sistema que valida se o CPF possui permissão para votar, por favor aguarde um momento e tente novamente.", exception.getMessage());
-
         verify(votoRepository, times(0)).save(voto);
     }
 
