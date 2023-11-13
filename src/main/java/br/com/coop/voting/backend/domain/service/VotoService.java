@@ -9,7 +9,6 @@ import br.com.coop.voting.backend.domain.model.Pauta;
 import br.com.coop.voting.backend.domain.model.SessaoVotacao;
 import br.com.coop.voting.backend.domain.model.Voto;
 import br.com.coop.voting.backend.domain.repository.AssociadoRepository;
-import br.com.coop.voting.backend.domain.repository.PautaRepository;
 import br.com.coop.voting.backend.domain.repository.SessaoVotacaoRepository;
 import br.com.coop.voting.backend.domain.repository.VotoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,13 +27,13 @@ public class VotoService {
     private AssociadoRepository associadoRepository;
 
     @Autowired
-    private PautaRepository pautaRepository;
-
-    @Autowired
     private SessaoVotacaoRepository sessaoVotacaoRepository;
 
     @Autowired
     private SessaoVotacaoService sessaoVotacaoService;
+
+    @Autowired
+    private PautaService pautaService;
 
     @Value("${url.integracao.validar.associado}")
     private String urlValidaCpfAssociado;
@@ -65,7 +64,7 @@ public class VotoService {
 
     private void validarCampos(Voto voto) {
         voto.setAssociado(retornarAssociado(voto.getAssociado()));
-        voto.setPauta(retornarPauta(voto.getPauta()));
+        voto.setPauta(pautaService.retornarPautaValida(voto.getPauta()));
         validarSeAssociadoPodeVotar(voto);
         validarSePautaPossuiSessaoEmAberto(voto.getPauta());
         voto.setVoto(EscolhaVoto.retornarVotoValido(voto.getVoto()));
@@ -78,15 +77,6 @@ public class VotoService {
 
         return associadoRepository.findById(associado.getId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Não encontrado Associado com Id %d.", associado.getId())));
-    }
-
-    private Pauta retornarPauta(Pauta pauta) {
-        if (pauta == null || pauta.getId() == null) {
-            throw new IllegalArgumentException("Não foi informado uma Pauta.");
-        }
-
-        return pautaRepository.findById(pauta.getId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Não encontrado Pauta com Id %d.", pauta.getId())));
     }
 
     private void validarSeAssociadoPodeVotar(Voto voto) {
