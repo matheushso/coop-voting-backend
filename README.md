@@ -25,16 +25,36 @@ A aplicação oferece funcionalidades essenciais para a gestão de pautas, votos
 1. **Cadastro de Novo Associado:**
     - Endpoint: `POST /api/v1/associados`
     - Permite cadastrar um novo associado através do CPF.
+    - Exemplo de JSON:
+    ```json
+    {
+      "cpf": "841.587.143-03"
+    }
+    ```
 
 2. **Cadastro de Nova Pauta:**
     - Endpoint: `POST /api/v1/pautas`
     - Permite cadastrar uma nova pauta para votação, sendo obrigatório informar a descrição da Pauta.
+    - Exemplo de JSON:
+    ```json
+    {
+      "descricao": "Pauta com descrição"
+    }
+    ```
 
 3. **Abertura de Sessão de Votação:**
     - Endpoint: `POST /api/v1/sessoesvotacoes/`
     - Abre uma sessão de votação para uma pauta específica através do ID da pauta. Pode ser definido 
    um tempo customizado para o tempo de duração da sessão através do parâmetro 'tempoAberturaEmMinutos' ou 
    assume-se o valor padrão de 1 minuto.
+    - Exemplo de JSON:
+    ```json
+    {
+      "pauta" : {
+        "id": 1
+      }
+    }
+    ```
 
 4. **Votação:**
     - Endpoint: `POST /api/v1/votos`
@@ -42,6 +62,18 @@ A aplicação oferece funcionalidades essenciais para a gestão de pautas, votos
     - Endpoint: `POST /api/v2/votos`
     - Nesse endpoint, antes de permitir o associado votar, é realizada uma integração com outro sistema
    que verifica, através do CPF do Associado, se o mesmo pode ou não votar.
+    - Exemplo de JSON:
+    ```json
+    {
+      "associado" : {
+          "id": 1
+      },
+      "voto": "Não",
+      "pauta" : {
+          "id": 1
+      }
+    }
+    ```
 
 5. **Contabilização e Resultado da Votação:**
     - Endpoint: `GET /api/v1/resultados`
