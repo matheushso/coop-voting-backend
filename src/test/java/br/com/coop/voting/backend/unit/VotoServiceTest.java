@@ -154,7 +154,7 @@ public class VotoServiceTest {
     }
 
     @Test
-    public void cadastrarVoto_dadoPautaNaoCadastrado_deveRetornarErro() {
+    public void cadastrarVoto_dadoPautaNaoCadastrada_deveRetornarErro() {
         Voto voto = new Voto();
         voto.setVoto(EscolhaVoto.SIM.toString());
 
