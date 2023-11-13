@@ -27,19 +27,24 @@ public class ResultadoService {
 
         ResultadoDTO resultado = new ResultadoDTO();
         resultado.setPautaDescricao(pauta.getDescricao());
-        resultado.setQuantidadeSessoes(pauta.getSessoesVotacao().size());
-        resultado.setTotalVotos(resultado.getTotalVotos() + pauta.getVotos().size());
 
-        for (Voto voto : pauta.getVotos()) {
-            if (voto.getVoto().equals(EscolhaVoto.SIM.toString())) {
-                resultado.setVotosFavoraveis(resultado.getVotosFavoraveis() + 1);
-            }
+        if (pauta.getVotos() != null) {
+            resultado.setTotalVotos(resultado.getTotalVotos() + pauta.getVotos().size());
+            for (Voto voto : pauta.getVotos()) {
+                if (voto.getVoto().equals(EscolhaVoto.SIM.toString())) {
+                    resultado.setVotosFavoraveis(resultado.getVotosFavoraveis() + 1);
+                }
 
-            if (voto.getVoto().equals(EscolhaVoto.NAO.toString())) {
-                resultado.setVotosContrarios(resultado.getVotosContrarios() + 1);
+                if (voto.getVoto().equals(EscolhaVoto.NAO.toString())) {
+                    resultado.setVotosContrarios(resultado.getVotosContrarios() + 1);
+                }
             }
         }
-        atualizarStatusSessao(pauta);
+
+        if (pauta.getSessoesVotacao() != null) {
+            resultado.setQuantidadeSessoes(pauta.getSessoesVotacao().size());
+            atualizarStatusSessao(pauta);
+        }
 
         return resultado;
     }
