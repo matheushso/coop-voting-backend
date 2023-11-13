@@ -1,7 +1,6 @@
 package br.com.coop.voting.backend.unit;
 
 import br.com.coop.voting.backend.domain.model.Pauta;
-import br.com.coop.voting.backend.domain.model.SessaoVotacao;
 import br.com.coop.voting.backend.domain.repository.PautaRepository;
 import br.com.coop.voting.backend.domain.service.PautaService;
 import jakarta.persistence.EntityNotFoundException;
@@ -11,11 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PautaServiceTest {
@@ -69,20 +69,31 @@ public class PautaServiceTest {
     public void retornarPautaValida_dadoPautaSemId_deveRetornarErro() {
         Pauta pauta = new Pauta();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> pautaService.retornarPautaValida(null));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> pautaService.retornarPautaValida(pauta));
 
         assertEquals("Não foi informado uma Pauta.", exception.getMessage());
         verify(pautaRepository, times(0)).findById(any());
     }
 
     @Test
-    public void cadastrarSessao_dadoSessaoVotacaoNaoCadastrada_deveRetornarErro() {
+    public void cadastrarSessao_dadoPautaNaoCadastrada_deveRetornarErro() {
         Pauta pauta = new Pauta();
         pauta.setId(1L);
 
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> pautaService.retornarPautaValida(pauta));
 
         assertEquals(String.format("Não encontrado Pauta com Id %d.", pauta.getId()), exception.getMessage());
-        verify(pautaRepository, times(1)).findById(any());
+        verify(pautaRepository, times(1)).findById(pauta.getId());
+    }
+
+    @Test
+    public void cadastrarSessao_dadoPautaCadastrada_deveValidarPautaComSucesso() {
+        Pauta pauta = new Pauta();
+        pauta.setId(1L);
+        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+
+        pautaService.retornarPautaValida(pauta);
+
+        verify(pautaRepository, times(1)).findById(pauta.getId());
     }
 }
