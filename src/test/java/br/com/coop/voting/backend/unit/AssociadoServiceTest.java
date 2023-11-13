@@ -36,7 +36,6 @@ public class AssociadoServiceTest {
         associado.setCpf("61828628662");
 
         associadoService.cadastrarAssociado(associado);
-
         verify(associadoRepository, times(1)).save(associado);
     }
 
