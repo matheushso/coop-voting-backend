@@ -9,9 +9,9 @@ import br.com.coop.voting.backend.domain.model.Pauta;
 import br.com.coop.voting.backend.domain.model.SessaoVotacao;
 import br.com.coop.voting.backend.domain.model.Voto;
 import br.com.coop.voting.backend.domain.repository.AssociadoRepository;
-import br.com.coop.voting.backend.domain.repository.PautaRepository;
 import br.com.coop.voting.backend.domain.repository.SessaoVotacaoRepository;
 import br.com.coop.voting.backend.domain.repository.VotoRepository;
+import br.com.coop.voting.backend.domain.service.PautaService;
 import br.com.coop.voting.backend.domain.service.SessaoVotacaoService;
 import br.com.coop.voting.backend.domain.service.VotoService;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,7 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,13 +44,13 @@ public class VotoServiceTest {
     private AssociadoRepository associadoRepository;
 
     @Mock
-    private PautaRepository pautaRepository;
-
-    @Mock
     private SessaoVotacaoRepository sessaoVotacaoRepository;
 
     @Mock
     private SessaoVotacaoService sessaoVotacaoService;
+
+    @Mock
+    private PautaService pautaService;
 
     @Mock
     private RestTemplate restTemplate;
@@ -66,7 +67,7 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(sessaoVotacaoRepository.buscarSessaoEmAbertoPorPauta(pauta.getId())).thenReturn(new SessaoVotacao());
 
@@ -119,58 +120,6 @@ public class VotoServiceTest {
     }
 
     @Test
-    public void cadastrarVoto_dadoPautaNull_deveRetornarErro() {
-        Voto voto = new Voto();
-        voto.setVoto(EscolhaVoto.SIM.toString());
-
-        Associado associado = mockarAssociado(voto);
-        when(associadoRepository.findById(associado.getId())).thenReturn(Optional.of(associado));
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
-
-        assertEquals("Não foi informado uma Pauta.", exception.getMessage());
-        verify(votoRepository, times(0)).save(voto);
-        verify(pautaRepository, times(0)).findById(any());
-    }
-
-    @Test
-    public void cadastrarVoto_dadoPautaSemId_deveRetornarErro() {
-        Voto voto = new Voto();
-        voto.setVoto(EscolhaVoto.SIM.toString());
-
-        Associado associado = mockarAssociado(voto);
-        when(associadoRepository.findById(associado.getId())).thenReturn(Optional.of(associado));
-
-        Pauta pauta = new Pauta();
-        pauta.setDescricao("Descrição de Pauta");
-        voto.setPauta(pauta);
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
-
-        assertEquals("Não foi informado uma Pauta.", exception.getMessage());
-        verify(votoRepository, times(0)).save(voto);
-        verify(pautaRepository, times(0)).findById(any());
-
-    }
-
-    @Test
-    public void cadastrarVoto_dadoPautaNaoCadastrada_deveRetornarErro() {
-        Voto voto = new Voto();
-        voto.setVoto(EscolhaVoto.SIM.toString());
-
-        Associado associado = mockarAssociado(voto);
-        when(associadoRepository.findById(associado.getId())).thenReturn(Optional.of(associado));
-
-        Pauta pauta = mockarPauta(voto);
-
-        EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> votoService.cadastrarVoto(voto));
-
-        assertEquals(String.format("Não encontrado Pauta com Id %d.", associado.getId()), exception.getMessage());
-        verify(votoRepository, times(0)).save(voto);
-        verify(pautaRepository, times(1)).findById(pauta.getId());
-    }
-
-    @Test
     public void cadastrarVoto_dadoAssociadoQueJaVotouNaPauta_deveRetornarErro() {
         Voto voto = new Voto();
         voto.setVoto(EscolhaVoto.SIM.toString());
@@ -178,8 +127,8 @@ public class VotoServiceTest {
         Associado associado = mockarAssociado(voto);
         when(associadoRepository.findById(associado.getId())).thenReturn(Optional.of(associado));
 
-        Pauta pauta = mockarPauta(voto);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        mockarPauta(voto);
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(votoRepository.findFirstByAssociadoAndPauta(voto.getAssociado(), voto.getPauta())).thenReturn(new Voto());
 
@@ -199,12 +148,13 @@ public class VotoServiceTest {
 
         Pauta pauta = mockarPauta(voto);
         pauta.setSessoesVotacao(null);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
 
         assertEquals(String.format("Pauta %s não possui nenhuma Sessão de votação.", pauta.getDescricao()), exception.getMessage());
         verify(votoRepository, times(0)).save(voto);
+        verify(sessaoVotacaoService, times(0)).verificarSeSessaoEstaEmAberto(any());
     }
 
     @Test
@@ -217,12 +167,13 @@ public class VotoServiceTest {
 
         Pauta pauta = mockarPauta(voto);
         pauta.setSessoesVotacao(new ArrayList<>());
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
 
         assertEquals(String.format("Pauta %s não possui nenhuma Sessão de votação.", pauta.getDescricao()), exception.getMessage());
         verify(votoRepository, times(0)).save(voto);
+        verify(sessaoVotacaoService, times(0)).verificarSeSessaoEstaEmAberto(any());
     }
 
     @Test
@@ -237,12 +188,13 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> votoService.cadastrarVoto(voto));
 
         assertEquals(String.format("Pauta %s não possui nenhuma Sessão de votação em aberto.", pauta.getDescricao()), exception.getMessage());
         verify(votoRepository, times(0)).save(voto);
+        verify(sessaoVotacaoService, times(0)).verificarSeSessaoEstaEmAberto(any());
     }
 
     @Test
@@ -257,7 +209,7 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(sessaoVotacaoRepository.buscarSessaoEmAbertoPorPauta(pauta.getId())).thenReturn(new SessaoVotacao());
 
@@ -279,7 +231,7 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(sessaoVotacaoRepository.buscarSessaoEmAbertoPorPauta(pauta.getId())).thenReturn(new SessaoVotacao());
 
@@ -301,7 +253,7 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(sessaoVotacaoRepository.buscarSessaoEmAbertoPorPauta(pauta.getId())).thenReturn(new SessaoVotacao());
         when(restTemplate.getForEntity(anyString(), eq(StatusDTO.class)))
@@ -325,7 +277,7 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(sessaoVotacaoRepository.buscarSessaoEmAbertoPorPauta(pauta.getId())).thenReturn(new SessaoVotacao());
         when(restTemplate.getForEntity(anyString(), eq(StatusDTO.class)))
@@ -349,7 +301,7 @@ public class VotoServiceTest {
         List<SessaoVotacao> sessoesVotacao = new ArrayList<>();
         sessoesVotacao.add(new SessaoVotacao());
         pauta.setSessoesVotacao(sessoesVotacao);
-        when(pautaRepository.findById(pauta.getId())).thenReturn(Optional.of(pauta));
+        when(pautaService.retornarPautaValida(voto.getPauta())).thenReturn(voto.getPauta());
 
         when(sessaoVotacaoRepository.buscarSessaoEmAbertoPorPauta(pauta.getId())).thenReturn(new SessaoVotacao());
         when(restTemplate.getForEntity(anyString(), eq(StatusDTO.class)))
